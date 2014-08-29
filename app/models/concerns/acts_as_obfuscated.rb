@@ -38,13 +38,6 @@ module ActsAsObfuscated
       self.name.split('').map { |char| alphabet.index(char) }.first(12).join.to_i
     )
 
-    # We need to track the Maximum ID of this Table
-    self.acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
-
-    after_commit :on => :create do
-      self.class.acts_as_obfuscated_opts[:max_id] = nil
-    end
-
     # Work with Ransack if available
     if self.respond_to?(:ransacker)
       ransacker :id, :formatter => Proc.new { |v| deobfuscate(v) } { |parent| parent.table[:id] }
@@ -71,16 +64,7 @@ module ActsAsObfuscated
         obfuscated_id = original.to_s
       end
 
-      if obfuscated_id.length == 10 || obfuscated_id.to_i > 2147483647  # This is PostgreSQL Integer Max Value
-        EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i
-      else
-        revealed = EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i
-        (revealed >= 2147483647 || revealed > deobfuscated_maximum_id) ? original : revealed
-      end
-    end
-
-    def deobfuscated_maximum_id
-      acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
+      EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i
     end
 
     def relation

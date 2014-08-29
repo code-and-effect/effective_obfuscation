@@ -120,15 +120,6 @@ User.deobfuscate(9905826174)
   => 43
 ```
 
-If the number is less than 10-digits long, it will not be considered an obfuscated number, so the original value will be returned
-
-```ruby
-User.deobfuscate(43)
-  => 43
-```
-
-
-
 ## License
 
 MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
