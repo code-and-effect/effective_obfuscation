@@ -38,6 +38,13 @@ module ActsAsObfuscated
       self.name.split('').map { |char| alphabet.index(char) }.first(12).join.to_i
     )
 
+    # We need to track the Maximum ID of this Table
+    self.acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
+
+    after_commit :on => :create do
+      self.class.acts_as_obfuscated_opts[:max_id] = nil
+    end
+
     # Work with Ransack if available
     if self.respond_to?(:ransacker)
       ransacker :id, :formatter => Proc.new { |v| deobfuscate(v) } { |parent| parent.table[:id] }
@@ -57,14 +64,25 @@ module ActsAsObfuscated
       end
     end
 
-    def deobfuscate(original)
+    def deobfuscate(original, fallback = false)
       if acts_as_obfuscated_opts[:format]
         obfuscated_id = original.to_s.delete('^0-9')
       else
         obfuscated_id = original.to_s
       end
 
-      EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i
+      # 2147483647 is PostgreSQL's Integer Max Value.  If we return a value higher than this, we get weird DB errors
+      revealed = [EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i, 2147483647].min
+
+      if fallback && (revealed >= 2147483647 || revealed > deobfuscated_maximum_id)
+        original
+      else
+        revealed
+      end
+    end
+
+    def deobfuscated_maximum_id
+      acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
     end
 
     def relation
@@ -87,7 +105,9 @@ module ActsAsObfuscated
 
     def find_by(*args)
       if args.first.kind_of?(Hash) && args.first.key?(:id)
-        args.first[:id] = deobfuscate(args.first[:id])
+        args.first[:id] = deobfuscate(args.first[:id], true)
+      elsif args.first.kind_of?(Hash) && args.first.key?('id')
+        args.first['id'] = deobfuscate(args.first['id'], true)
       end
 
       super(*args)
@@ -95,7 +115,9 @@ module ActsAsObfuscated
 
     def where(*args)
       if args.first.kind_of?(Hash) && args.first.key?(:id)
-        args.first[:id] = deobfuscate(args.first[:id])
+        args.first[:id] = deobfuscate(args.first[:id], true)
+      elsif args.first.kind_of?(Hash) && args.first.key?('id')
+        args.first['id'] = deobfuscate(args.first['id'], true)
       elsif args.first.class.parent == Arel::Nodes
         deobfuscate_arel!(args.first)
       end
@@ -113,9 +135,11 @@ module ActsAsObfuscated
           deobfuscate_arel!(node.expr)
         elsif node.respond_to?(:left) && node.left.name == 'id'
           if node.right.kind_of?(Array)
-            node.right = node.right.map { |id| deobfuscate(id) }
+            node.right = node.right.map { |id| deobfuscate(id, true) }
           elsif node.right.kind_of?(Integer) || node.right.kind_of?(String)
-            node.right = deobfuscate(node.right)
+            if node.right.to_s == node.right.to_s.parameterize # This catches passing a $1
+              node.right = deobfuscate(node.right, true)
+            end
           end
         end
       end
