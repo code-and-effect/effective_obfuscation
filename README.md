@@ -120,6 +120,13 @@ User.deobfuscate(9905826174)
   => 43
 ```
 
+### Searching by the Real (Database) ID
+
+```ruby
+User.find(User.obfuscate(43))
+```
+
+
 ## License
 
 MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
