@@ -60,7 +60,7 @@ Thats it.  Now URLs for a User will be generated as
 http://example.com/users/2356513904
 ```
 
-As well, any find(), exists?(), find_by_id(), or where(:id => params[:id]) methods will be automatically translated to lookup the proper underlying ID.
+As well, any find(), exists?(), find_by_id(), find_by(), where(:id => params[:id]) and all Arel table finder methods will be automatically translated to lookup the proper underlying ID.
 
 You shouldn't require any changes to your view or controller code. Just Works with InherittedResources and ActiveAdmin.
 
@@ -122,10 +122,33 @@ User.deobfuscate(9905826174)
 
 ### Searching by the Real (Database) ID
 
+By default, all finder method except find() will work with both obfuscated and database IDs.
+
+This means,
+
 ```ruby
-User.find(User.obfuscate(43))
+User.where(:id => "990-5826-174")
+  => User<id: 43>
 ```
 
+returns the same User as
+
+```ruby
+User.where(:id => 43)
+  => User<id: 43>
+```
+
+This behaviour is not applied to find() because it would allow a user to visit:
+
+http://example.com/users/1
+http://example.com/users/2
+...etc...
+
+and enumerate all users.
+
+Please continue to use @user = User.find(params[:id]) in your controller to prevent enumeration.
+
+Any other internally used finder methods should respond to both obfuscated and database IDs for maximum compatibility.
 
 ## License
 
