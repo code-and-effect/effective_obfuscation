@@ -1,8 +1,8 @@
 # Effective Obfuscation
 
-Use a unique 10-digit number instead of ActiveRecord IDs
+Display unique 10-digit numbers instead of ActiveRecord IDs.
 
-Turn a URL like
+Turn a URL like:
 
 ```ruby
 http://example.com/users/3
@@ -82,7 +82,7 @@ will generate URLs that look like
 http://example.com/users/235-6513-904
 ```
 
-Any String.parameterize-able characters will work as long as there are exactly 10 # characters in the format string somewhere.
+Any String.parameterize-able characters will work as long as there are exactly 10 # (hash symbol) characters in the format string somewhere.
 
 
 ### ScatterSwap Spin
@@ -122,7 +122,7 @@ User.deobfuscate(9905826174)
 
 ### Searching by the Real (Database) ID
 
-By default, all finder method except find() will work with both obfuscated and database IDs.
+By default, all finder method except `find()` will work with both obfuscated and database IDs.
 
 This means,
 
@@ -138,7 +138,7 @@ User.where(:id => 43)
   => User<id: 43>
 ```
 
-This behaviour is not applied to find() because it would allow a user to visit:
+This behaviour is not applied to `find()` because it would allow a user to visit:
 
 http://example.com/users/1
 http://example.com/users/2
@@ -146,9 +146,9 @@ http://example.com/users/2
 
 and enumerate all users.
 
-Please continue to use @user = User.find(params[:id]) in your controller to prevent enumeration.
+Please continue to use @user = User.find(params[:id]) in your controller to prevent route enumeration.
 
-Any other internally used finder methods should respond to both obfuscated and database IDs for maximum compatibility.
+Any other internally used finder methods, `where` and `find_by_id` should respond to both obfuscated and database IDs for maximum compatibility.
 
 ## License
 
@@ -168,7 +168,7 @@ and uses the same (simply genius!) underlying algorithm
 ScatterSwap (https://github.com/namick/scatter_swap)
 
 
-### Testing
+## Testing
 
 The test suite for this gem is unfortunately not yet complete.
 
@@ -177,3 +177,14 @@ Run tests by:
 ```ruby
 rake spec
 ```
+
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Bonus points for test coverage
+6. Create new Pull Request
+

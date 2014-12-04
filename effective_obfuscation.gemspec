@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.email       = ["info@codeandeffect.com"]
   s.authors     = ["Code and Effect"]
   s.homepage    = "https://github.com/code-and-effect/effective_obfuscation"
-  s.summary     = "Obfuscate IDs to hide IDs from URLs"
-  s.description = "TODO"
+  s.summary     = "Display unique 10-digit numbers instead of ActiveRecord IDs."
+  s.description = "Display unique 10-digit numbers instead of ActiveRecord IDs."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
