@@ -1,3 +1,3 @@
 module EffectiveObfuscation
-  VERSION = "0.1.4"
+  VERSION = '1.0.0'.freeze
 end

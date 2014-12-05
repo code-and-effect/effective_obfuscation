@@ -1,6 +1,6 @@
 # Effective Obfuscation
 
-Display unique 10-digit numbers instead of ActiveRecord IDs.
+Display unique 10-digit numbers instead of ActiveRecord IDs.  Hides the ID param so curious website visitors are unable to determine your user or order count.
 
 Turn a URL like:
 
@@ -152,9 +152,9 @@ Any other internally used finder methods, `where` and `find_by_id` should respon
 
 ## License
 
-MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
+MIT License.  Copyright [Code and Effect Inc.](http://www.codeandeffect.com/)
 
-You are not granted rights or licenses to the trademarks of Code and Effect
+Code and Effect is the product arm of [AgileStyle](http://www.agilestyle.com/), an Edmonton-based shop that specializes in building custom web applications with Ruby on Rails.
 
 
 ## Credits
