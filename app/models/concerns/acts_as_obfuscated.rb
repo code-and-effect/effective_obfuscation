@@ -41,7 +41,7 @@ module ActsAsObfuscated
     # We need to track the Maximum ID of this Table
     self.acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
 
-    after_commit :on => :create do
+    after_create do
       self.class.acts_as_obfuscated_opts[:max_id] = nil
     end
 
