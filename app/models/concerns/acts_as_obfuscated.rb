@@ -74,11 +74,8 @@ module ActsAsObfuscated
         return original
       end
 
-      if acts_as_obfuscated_opts[:format]
-        obfuscated_id = original.to_s.delete('^0-9')
-      else
-        obfuscated_id = original.to_s
-      end
+      # Remove any non-digit formatting characters, and only consider the first 10 digits
+      obfuscated_id = original.to_s.delete('^0-9').first(10)
 
       # 2147483647 is PostgreSQL's Integer Max Value.  If we return a value higher than this, we get weird DB errors
       revealed = [EffectiveObfuscation.show(obfuscated_id, acts_as_obfuscated_opts[:spin]).to_i, 2147483647].min
