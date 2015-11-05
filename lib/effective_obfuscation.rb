@@ -1,6 +1,5 @@
-require "effective_obfuscation/engine"
-require "effective_obfuscation/version"
 require 'scatter_swap'
+require "effective_obfuscation/engine"
 
 module EffectiveObfuscation
   def self.hide(id, spin)
