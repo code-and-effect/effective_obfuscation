@@ -49,6 +49,10 @@ module ActsAsObfuscated
     if self.respond_to?(:ransacker)
       ransacker :id, :formatter => Proc.new { |v| deobfuscate(v) } { |parent| parent.table[:id] }
     end
+
+    if ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR == 2
+      extend FinderMethods
+    end
   end
 
   module ClassMethods
@@ -112,6 +116,8 @@ module ActsAsObfuscated
 
   module FinderMethods
     def find(*args)
+      return find_by_id(args.first) if @_effective_obfuscation_reloading
+
       super(deobfuscate(args.first, false))
     end
 
@@ -161,6 +167,13 @@ module ActsAsObfuscated
         end
       end
     end
+  end
+
+  def reload(options = nil)
+    self.class.instance_variable_set(:@_effective_obfuscation_reloading, true)
+    retval = super
+    self.class.instance_variable_set(:@_effective_obfuscation_reloading, nil)
+    retval
   end
 
   def to_param
