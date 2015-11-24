@@ -109,8 +109,10 @@ module ActsAsObfuscated
       acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
     end
 
-    def relation
-      super.tap { |relation| relation.extend(FinderMethods) }
+    unless ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR == 2
+      def relation
+        super.tap { |relation| relation.extend(FinderMethods) }
+      end
     end
   end
 
