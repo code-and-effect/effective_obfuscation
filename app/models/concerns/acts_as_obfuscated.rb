@@ -47,7 +47,10 @@ module ActsAsObfuscated
 
     # Work with Ransack if available
     if self.respond_to?(:ransacker)
-      ransacker :id, :formatter => Proc.new { |v| deobfuscate(v) } { |parent| parent.table[:id] }
+      ransacker :id, :formatter => Proc.new { |original|
+        obfuscated_id = original.to_s.delete('^0-9').first(10)
+        obfuscated_id.length == 10 ? deobfuscate(original) : 0
+      } { |parent| parent.table[:id] }
     end
 
     if ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR == 2
@@ -98,6 +101,7 @@ module ActsAsObfuscated
         reflect_on_all_associations(:belongs_to).each do |reflection|
           if reflection.klass.respond_to?(:deobfuscate)
             deobfuscators[reflection.foreign_key] = Proc.new { |right| reflection.klass.deobfuscate(right) }
+            # Should override the foreign_object_id= method and deobfuscate it too
           end
         end
       end
