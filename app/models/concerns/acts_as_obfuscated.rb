@@ -53,9 +53,7 @@ module ActsAsObfuscated
       } { |parent| parent.table[:id] }
     end
 
-    if ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR == 2
-      extend FinderMethods
-    end
+    extend FinderMethods if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0')
   end
 
   module ClassMethods
@@ -113,7 +111,7 @@ module ActsAsObfuscated
       acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
     end
 
-    unless ::ActiveRecord::VERSION::MAJOR == 4 && ::ActiveRecord::VERSION::MINOR == 2
+    if Gem::Version.new(Rails.version) < Gem::Version.new('4.2')
       def relation
         super.tap { |relation| relation.extend(FinderMethods) }
       end
