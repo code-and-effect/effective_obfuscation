@@ -97,7 +97,7 @@ module ActsAsObfuscated
         deobfuscators['id'] = Proc.new { |right| self.deobfuscate(right) }
 
         reflect_on_all_associations(:belongs_to).each do |reflection|
-          if reflection.klass.respond_to?(:deobfuscate)
+          if (reflection.klass rescue nil).respond_to?(:deobfuscate)
             deobfuscators[reflection.foreign_key] = Proc.new { |right| reflection.klass.deobfuscate(right) }
             # Should override the foreign_object_id= method and deobfuscate it too
           end
