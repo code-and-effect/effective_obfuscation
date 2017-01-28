@@ -122,7 +122,7 @@ module ActsAsObfuscated
 
   module FinderMethods
     def find(*args)
-      return find_by_id(args.first) if @_effective_obfuscation_reloading
+      return find_by_id(args.first) if (@_effective_obfuscation_reloading || klass.try(:instance_variable_get, :@_effective_obfuscation_reloading))
 
       super(deobfuscate(args.first, false))
     end
