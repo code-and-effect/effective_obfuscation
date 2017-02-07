@@ -33,7 +33,7 @@ This is a Rails 4 compatible version of obfuscate_id (https://github.com/namick/
 Add to Gemfile:
 
 ```ruby
-gem 'effective_obfuscation', :git => 'https://github.com/code-and-effect/effective_obfuscation.git'
+gem 'effective_obfuscation'
 ```
 
 Run the bundle command to install it:
