@@ -53,9 +53,7 @@ module ActsAsObfuscated
       } { |parent| parent.table[:id] }
     end
 
-    if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2') && Gem::Version.new(Rails.version) < Gem::Version.new('5')
-      extend FinderMethods
-    end
+    extend FinderMethods if EffectiveObfuscation.extend_klass?
   end
 
   module ClassMethods
@@ -113,7 +111,7 @@ module ActsAsObfuscated
       acts_as_obfuscated_opts[:max_id] ||= (self.unscoped.maximum(:id) rescue 2147483647)
     end
 
-    if Gem::Version.new(Rails.version) < Gem::Version.new('4.2') || Gem::Version.new(Rails.version) >= Gem::Version.new('5')
+    if EffectiveObfuscation.extend_relation?
       def relation
         super.tap { |relation| relation.extend(FinderMethods) }
       end
@@ -122,7 +120,9 @@ module ActsAsObfuscated
 
   module FinderMethods
     def find(*args)
-      return find_by_id(args.first) if (@_effective_obfuscation_reloading || klass.try(:instance_variable_get, :@_effective_obfuscation_reloading))
+      if @_effective_obfuscation_reloading || (respond_to?(:klass) && klass.try(:instance_variable_get, :@_effective_obfuscation_reloading))
+        return find_by_id(args.first)
+      end
 
       super(deobfuscate(args.first, false))
     end

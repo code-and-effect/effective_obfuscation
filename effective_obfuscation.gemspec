@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.email       = ['info@codeandeffect.com']
   s.authors     = ['Code and Effect']
   s.homepage    = 'https://github.com/code-and-effect/effective_obfuscation'
-  s.summary     = 'Display unique 10-digit numbers instead of ActiveRecord IDs.  Hides the ID param so curious website visitors are unable to determine your user or order count.'
-  s.description = 'Display unique 10-digit numbers instead of ActiveRecord IDs.  Hides the ID param so curious website visitors are unable to determine your user or order count.'
+  s.summary     = 'Display unique 10-digit numbers instead of ActiveRecord IDs. Hides the ID param so curious website visitors are unable to determine your resource count.'
+  s.description = 'Display unique 10-digit numbers instead of ActiveRecord IDs. Hides the ID param so curious website visitors are unable to determine your resource count.'
   s.licenses    = ['MIT']
 
   s.files = Dir['{app,config,db,lib}/**/*'] + ['MIT-LICENSE', 'README.md']
