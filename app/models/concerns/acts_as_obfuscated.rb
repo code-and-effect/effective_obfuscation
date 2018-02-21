@@ -50,7 +50,7 @@ module ActsAsObfuscated
       ransacker :id, :formatter => Proc.new { |original|
         obfuscated_id = original.to_s.delete('^0-9').first(10)
         obfuscated_id.length == 10 ? deobfuscate(original) : 0
-      } { |parent| parent.table[:id] }
+      } do |parent| parent.table[:id] end
     end
 
     extend FinderMethods if EffectiveObfuscation.extend_klass?

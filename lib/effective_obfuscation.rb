@@ -13,7 +13,7 @@ module EffectiveObfuscation
 
   def self.extend_klass?
     return false if Gem::Version.new(Rails.version) < Gem::Version.new('4.2')
-    return true if Gem::Version.new(Rails.version) >= Gem::Version.new('5.1')
+    return true if Gem::Version.new(Rails.version) >= Gem::Version.new('5')
     false
   end
 
