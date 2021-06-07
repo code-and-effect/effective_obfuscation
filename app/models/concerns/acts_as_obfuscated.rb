@@ -152,7 +152,7 @@ module ActsAsObfuscated
           next unless (d = deobfuscator(left))
           args.first[left] = d.call(right)
         end
-      elsif args.first.class.parent == Arel::Nodes
+      elsif args.first.kind_of?(String) == false
         deobfuscate_arel!(args.first)
       end
 
@@ -187,4 +187,3 @@ module ActsAsObfuscated
   end
 
 end
-
