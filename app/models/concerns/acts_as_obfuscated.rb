@@ -57,6 +57,10 @@ module ActsAsObfuscated
   end
 
   module ClassMethods
+    def acts_as_obfuscated?
+      true
+    end
+
     def obfuscate(original)
       obfuscated = EffectiveObfuscation.hide(original, acts_as_obfuscated_opts[:spin])
 
@@ -184,6 +188,10 @@ module ActsAsObfuscated
 
   def to_param
     self.class.obfuscate(self.id)
+  end
+
+  def to_global_id(**params)
+    GlobalID.new(URI::GID.build(app: Rails.application.config.global_id.app, model_name: model_name, model_id: to_param, params: params))
   end
 
 end
